@@ -1,3 +1,4 @@
+
 function Gallery() {
     this.board = document.createElement('div')
 
