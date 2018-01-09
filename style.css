@@ -1,0 +1,28 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    background-color: lightgrey;
+    font-family: Tahoma, sans-serif;
+    font-size: 1em;
+}
+canvas {
+    border: 1px solid black;
+}
+input {
+    display: none;
+}
+input+label,
+.create {
+    margin: 10px;
+    padding: 0.5em 1em;
+    color: white;
+    background: darkred;
+    border-radius: 5px;
+    transition: 0.5s;
+    display: inline-block;
+}
+input+label:hover,
+.create:hover {
+    background-color: purple;
+    cursor: pointer;
+}
