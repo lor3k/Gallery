@@ -1,13 +1,11 @@
-/*
-
-fileModule
-
-*   modul odpowiadajacy za operacje na plikach
-*   (sprawdzenie czy plik ma poprawny format, zaladowanie zawartosci pliku, etc.)
-
-*/
-
 let imagesList = [];
+
+function fileImport(inputFiles, allowedFiles) {
+    let extensions = getExtension(inputFiles);
+    let correctImages = isCorrectFormat(extensions, allowedFiles);
+    addCorrectFilesToList(inputFiles, correctImages);
+    console.log(imagesList);
+}
 
 function getExtension(inputFiles) {
     let extensionsArray = [];
@@ -19,29 +17,23 @@ function getExtension(inputFiles) {
     return extensionsArray;
 }
 
-function isCorrectImage(extensions, allowedFiles) {
+function isCorrectFormat(extensions, allowedFiles) {
     let isExtensionAllowed = extensions.map(ext => {
         return allowedFiles.includes(ext);
-    });  
+    });
     return isExtensionAllowed;
 }
 
 function addCorrectFilesToList(inputFiles, correctImages) {
-    correctImages.forEach((correctExt, index)=>{
-        if(correctExt){
-            imagesList.push(inputFiles[index]);
+    correctImages.forEach((ext, i) => {
+        if (ext) {
+            imagesList.push(inputFiles[i]);
             console.log('%c Correct extention!', 'background: green;');
         }
         else {
             console.log('%c Wrong file extention!', 'background: darkred;');
         }
     });
-}
-
-function fileImport(inputFiles, allowedFiles) {
-    let extensions = getExtension(inputFiles);
-    let correctImages = isCorrectImage(extensions, allowedFiles);
-    addCorrectFilesToList(inputFiles, correctImages);
 }
 
 export { fileImport, imagesList };
