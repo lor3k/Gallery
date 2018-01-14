@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,11 @@
     <link rel="stylesheet" href="style.css">
     <title>Gallery</title>
 </head>
+
 <body>
-    <div class='create'>Create new gallery</div>
+    <input id="fieldInput" type="file" accept="image/*" name="fileAdd" multiple="">
+    <label for="fieldInput">Add new image or drag &amp; drop...</label>
+    <div id="dropArea"></div>
     <script src='index.js'></script>
 </body>
 

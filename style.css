@@ -12,7 +12,7 @@ input {
     display: none;
 }
 input+label,
-.create {
+.add {
     margin: 10px;
     padding: 0.5em 1em;
     color: white;
@@ -22,7 +22,13 @@ input+label,
     display: inline-block;
 }
 input+label:hover,
-.create:hover {
+.add:hover {
     background-color: purple;
     cursor: pointer;
+}
+
+#dropArea{
+    min-height: 50vh;
+    background-color: grey;
+    border: 2px solid white;
 }
