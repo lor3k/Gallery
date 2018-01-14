@@ -5,6 +5,6 @@ init({
   thumbHeight: 250,
   dropArea: '#dropArea',
   input: '#fieldInput',
-  allowedFiles: ['png']
+  allowedFiles: ['png','jpg']
 });
 

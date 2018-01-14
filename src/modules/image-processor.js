@@ -12,36 +12,37 @@ imageProcessor rowniez odpowiada za przypisanie i odpiecie eventListenerow !!!!!
 
 */
 
-import {fileImport} from './file-importer';
+import { fileImport, imagesList } from './file-importer';
 
-function attachInput(input, allowedFiles){
+function attachInput(input, allowedFiles) {
     let inputElement = document.querySelector(input);
-    inputElement.addEventListener('change', function(){fileImport(this.files, allowedFiles)}, false);
+    inputElement.addEventListener('change', e => fileImport(e.target.files, allowedFiles), false);
     return inputElement;
 }
 
-function prevent(e){
+function prevent(e) {
     e.stopPropagation();
     e.preventDefault();
 }
 
-function onDrop(e, allowedFiles){
+function onDrop(e, allowedFiles) {
     e.stopPropagation();
     e.preventDefault();
     let files = e.dataTransfer.files;
+    console.log(files);
     fileImport(files, allowedFiles);
 }
 
-function attachDragAndDrop(dropArea, allowedFiles){
+function attachDragAndDrop(dropArea, allowedFiles) {
     let dropAreaElement = document.querySelector(dropArea);
     dropAreaElement.addEventListener('dragover', prevent, false);
     dropAreaElement.addEventListener('dragenter', prevent, false);
     dropAreaElement.addEventListener('drop', e => onDrop(e, allowedFiles), false);
 }
 
-const init = ({thumbWidth, thumbHeight, dropArea, input, allowedFiles}) => {
+const init = ({ thumbWidth, thumbHeight, dropArea, input, allowedFiles }) => {
     attachInput(input, allowedFiles);
     attachDragAndDrop(dropArea, allowedFiles);
 }
 
-export {init};
+export { init };

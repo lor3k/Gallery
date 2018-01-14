@@ -13,7 +13,7 @@ function getExtension(inputFiles) {
     let extensionsArray = [];
     for (let i = 0; i < inputFiles.length; i++) {
         let fileNameSplitted = inputFiles[i].name.split('.');
-        let fileExt = fileNameSplitted[fileNameSplitted.length - 1];
+        let fileExt = fileNameSplitted[fileNameSplitted.length - 1].toLowerCase();
         extensionsArray.push(fileExt)
     }
     return extensionsArray;
@@ -21,9 +21,8 @@ function getExtension(inputFiles) {
 
 function isCorrectImage(extensions, allowedFiles) {
     let isExtensionAllowed = extensions.map(ext => {
-        allowedFiles.includes(ext);
-        console.log(allowedFiles, ext)
-    });
+        return allowedFiles.includes(ext);
+    });  
     return isExtensionAllowed;
 }
 
@@ -31,6 +30,10 @@ function addCorrectFilesToList(inputFiles, correctImages) {
     correctImages.forEach((correctExt, index)=>{
         if(correctExt){
             imagesList.push(inputFiles[index]);
+            console.log('%c Correct extention!', 'background: green;');
+        }
+        else {
+            console.log('%c Wrong file extention!', 'background: darkred;');
         }
     });
 }
