@@ -4,7 +4,6 @@ function fileImport(inputFiles, allowedFiles) {
     let extensions = getExtension(inputFiles);
     let correctImages = isCorrectFormat(extensions, allowedFiles);
     addCorrectFilesToList(inputFiles, correctImages);
-    console.log(imagesList);
 }
 
 function getExtension(inputFiles) {

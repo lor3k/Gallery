@@ -1,45 +1,47 @@
-function renderGallery(dropArea, imagesList) {
+function renderGallery(dropArea, imagesList, thumbWidth, thumbHeight) {
     clearGallery(dropArea);
-    let images = createImages(imagesList);
-    let thumbnailsList = createThumbnails(images, thumbWidth, thumbHeight);
+    let images = createImages(imagesList, thumbWidth, thumbHeight);
+    let thumbnailsList = createImages(images, thumbWidth, thumbHeight);
     addThumbnailsToGallery(thumbnailsList, dropArea);
-    addEventListenersToThumbnails();
+    // addEventListenersToThumbnails();
 }
 
 function clearGallery(dropArea) {
     document.querySelector(dropArea).innerHTML = '';
 }
 
-function createImages(imagesList) {
-    let images = imagesList.map(el => {
+function createImages(imagesList, thumbWidth, thumbHeight) {
+    let thumbnailsList = [];
+    let images = imagesList.forEach(el => {
         let img = new Image();
         img.src = URL.createObjectURL(el);
+        img.onload = function () {
+            let imageSize = { imageWidth: this.width, imageHeight: this.height };
+            let canvasStartPoints = checkProportions(imageSize, thumbWidth, thumbHeight);
+            let thumbnail = createThumbnail(canvasStartPoints, this);
+            thumbnailsList.push(thumbnail);
+            console.log(thumbnail)
+        }
         // URL.revokeObjectURL(img.src);
-        return img;
     });
-    // console.log(images);
-    return images;
+    return thumbnailsList; // cannot return before image onload !!!
 }
 
-function createThumbnails(images, thumbWidth, thumbHeight) {
-    let thumbnailsList = images.map((image) => {
-        let thumbnail = document.createElement('canvas');
-        let context = thumbnail.getContext('2d');
-        let canvasStartPoints = checkProportions(image, thumbWidth, thumbHeight);
-        context.drawImage(image, canvasStartPoints[x], canvasStartPoints[y], thumbWidth, thumbHeight);
-        return thumbnail;
-    });
-    return thumbnailsList;
-}
-
-function checkProportions(image, thumbWidth, thumbHeight) {
-    let widthProportion = image.width / thumbWidth;
-    let heightProportion = image.height / thumbHeight;
+function checkProportions({ imageWidth, imageHeight }, thumbWidth, thumbHeight) {
+    let widthProportion = imageWidth / thumbWidth;
+    let heightProportion = imageHeight / thumbHeight;
     let proportion = Math.max(widthProportion, heightProportion);
-    let xStartPoint = (thumbWidth - (0.5 * image.width / proportion));
-    let yStartPoint = (thumbHeight - (0.5 * image.height / proportion));
-    let canvasStartPoints = { x: xStartPoint, y: yStartPoint };
-    return canvasStartPoints;
+    let xStartPoint = ((thumbWidth - (imageWidth / proportion)) / 2);
+    let yStartPoint = ((thumbHeight - (imageHeight / proportion)) / 2);
+    return { xStartPoint, yStartPoint, thumbWidth, thumbHeight };
+}
+
+function createThumbnail(canvasStartPoints, img) {
+    const { xStartPoint, yStartPoint, thumbWidth, thumbHeight } = canvasStartPoints;
+    let thumbnail = document.createElement('canvas');
+    let context = thumbnail.getContext('2d');
+    context.drawImage(img, xStartPoint, yStartPoint, thumbWidth, thumbHeight);
+    return thumbnail;
 }
 
 function addThumbnailsToGallery(thumbnailsList, dropArea) {
@@ -50,11 +52,12 @@ function addThumbnailsToGallery(thumbnailsList, dropArea) {
     return galleryContainer;
 }
 
-function addEventListenersToThumbnails(){
-    document.getElementsByTagName('canvas').forEach((thumbnail, i) => {
-        thumbnail.addEventListener('click', e => renderFullSizeImage(e, i), false);
-        thumbnail.addEventListener('contextmenu', e => removeFromGallery(e, i), false);
-    });
+function addEventListenersToThumbnails() {
+    let actualThumbnailsList = document.getElementsByTagName('canvas');
+    for (let i = 0; i < actualThumbnailsList.length; i++) {
+        actualThumbnailsList[i].addEventListener('click', e => renderFullSizeImage(e, i), false);
+        actualThumbnailsList[i].addEventListener('contextmenu', e => removeFromGallery(e, i), false);
+    }
 }
 
 function renderFullSizeImage(e, i) {
