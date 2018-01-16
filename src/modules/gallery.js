@@ -1,77 +1,80 @@
 function renderGallery(dropArea, imagesList, thumbWidth, thumbHeight) {
+    const thumbWH = { thumbWidth, thumbHeight };
     clearGallery(dropArea);
-    let images = createImages(imagesList, thumbWidth, thumbHeight);
-    let thumbnailsList = createImages(images, thumbWidth, thumbHeight);
-    addThumbnailsToGallery(thumbnailsList, dropArea);
-    // addEventListenersToThumbnails();
+    let imgsUrl = createImgUrlArray(imagesList);
+    let promiseArr = imgsUrl.map(url => createImage(url));
+    Promise.all(promiseArr)
+        .then(imagesArr => {
+            let thumbnails = createThumbnails(imagesArr, thumbWH);
+            addThumbnailsToGallery(thumbnails, imagesArr, dropArea);
+        });
 }
 
 function clearGallery(dropArea) {
     document.querySelector(dropArea).innerHTML = '';
 }
 
-function createImages(imagesList, thumbWidth, thumbHeight) {
-    let thumbnailsList = [];
-    let images = imagesList.forEach(el => {
-        let img = new Image();
-        img.src = URL.createObjectURL(el);
-        img.onload = function () {
-            let imageSize = { imageWidth: this.width, imageHeight: this.height };
-            let canvasStartPoints = checkProportions(imageSize, thumbWidth, thumbHeight);
-            let thumbnail = createThumbnail(canvasStartPoints, this);
-            thumbnailsList.push(thumbnail);
-            console.log(thumbnail)
+function createImgUrlArray(imagesList) {
+    return imagesList.map(image => URL.createObjectURL(image))
+}
+
+function createImage(url) {
+    return new Promise(resolve => {
+        const listener = function (e) {
+            resolve(this);
         }
-        // URL.revokeObjectURL(img.src);
+        const image = new Image();
+        image.src = url;
+        image.onload = listener;
     });
-    return thumbnailsList; // cannot return before image onload !!!
 }
 
-function checkProportions({ imageWidth, imageHeight }, thumbWidth, thumbHeight) {
-    let widthProportion = imageWidth / thumbWidth;
-    let heightProportion = imageHeight / thumbHeight;
-    let proportion = Math.max(widthProportion, heightProportion);
-    let xStartPoint = ((thumbWidth - (imageWidth / proportion)) / 2);
-    let yStartPoint = ((thumbHeight - (imageHeight / proportion)) / 2);
-    return { xStartPoint, yStartPoint, thumbWidth, thumbHeight };
+function createThumbnails(imagesArr, thumbWH) {
+    let canvasStartPoints = checkProportions(imagesArr, thumbWH);
+    let { thumbWidth, thumbHeight } = thumbWH;
+    return imagesArr.map((image, index) => {
+        let { xStartPoint, yStartPoint, contentWidth, contentHeight } = canvasStartPoints[index];
+        let thumbnail = document.createElement('canvas');
+        thumbnail.width = thumbWidth;
+        thumbnail.height = thumbHeight;
+        let context = thumbnail.getContext('2d');
+        context.fillStyle = "black";
+        context.fillRect(0, 0, thumbWidth, thumbHeight);
+        context.drawImage(image, xStartPoint, yStartPoint, contentWidth, contentHeight);
+        return thumbnail;
+    })
 }
 
-function createThumbnail(canvasStartPoints, img) {
-    const { xStartPoint, yStartPoint, thumbWidth, thumbHeight } = canvasStartPoints;
-    let thumbnail = document.createElement('canvas');
-    let context = thumbnail.getContext('2d');
-    context.drawImage(img, xStartPoint, yStartPoint, thumbWidth, thumbHeight);
-    return thumbnail;
+function checkProportions(imagesArr, { thumbWidth, thumbHeight }) {
+    return imagesArr.map(image => {
+        let widthProportion = image.width / thumbWidth;
+        let heightProportion = image.height / thumbHeight;
+        let ratio = Math.max(widthProportion, heightProportion);
+        let contentWidth = image.width / ratio;
+        let contentHeight = image.height / ratio;
+        let xStartPoint = (thumbWidth - contentWidth) / 2;
+        let yStartPoint = (thumbHeight - contentHeight) / 2;
+        return { xStartPoint, yStartPoint, contentWidth, contentHeight };
+    });
 }
 
-function addThumbnailsToGallery(thumbnailsList, dropArea) {
+function addThumbnailsToGallery(thumbnails, imagesArr, dropArea) {
     let galleryContainer = document.querySelector(dropArea);
-    thumbnailsList.forEach(thumbnail => {
+    thumbnails.forEach((thumbnail, index) => {
         galleryContainer.appendChild(thumbnail);
+        thumbnail.addEventListener('click', () => renderFullSizeImage(thumbnail, imagesArr[index]), false);
     })
     return galleryContainer;
 }
 
-function addEventListenersToThumbnails() {
-    let actualThumbnailsList = document.getElementsByTagName('canvas');
-    for (let i = 0; i < actualThumbnailsList.length; i++) {
-        actualThumbnailsList[i].addEventListener('click', e => renderFullSizeImage(e, i), false);
-        actualThumbnailsList[i].addEventListener('contextmenu', e => removeFromGallery(e, i), false);
-    }
-}
-
-function renderFullSizeImage(e, i) {
+function renderFullSizeImage(thumbnail, image) {
     let newWindow = window.open();
     let canvas = newWindow.document.createElement('canvas');
-    let context = image.getContext('2d');
-    context.drawImage(img, 0, 0, img.width, img.height);
+    let context = canvas.getContext('2d');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    context.drawImage(image, 0, 0, image.width, image.height);
     newWindow.document.body.appendChild(canvas);
-}
-
-function removeFromImagesList(i) {
-    this.prevent(e);
-    thumbnail.remove();
-    // imagesList = this.imagesList.slice(0, i).concat(this.imagesList.slice(i + 1));
 }
 
 export { renderGallery };

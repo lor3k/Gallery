@@ -1,15 +1,23 @@
 import { fileImport, imagesList } from './file-importer';
 import { renderGallery } from './gallery';
 
-function attachInput(input, allowedFiles) {
+function attachInput(config) {
+    let { input } = config;
     let inputElement = document.querySelector(input);
-    inputElement.addEventListener('change', e => fileImport(e.target.files, allowedFiles), false);
+    inputElement.addEventListener('change', e => fileImportAndRender(e, config), false);
     return inputElement;
 }
 
-function fileImportAndRender(){
-    e => fileImport(e.target.files, allowedFiles)
-    renderGallery(dropArea, imagesList, thumbWidth, thumbHeight); 
+function fileImportAndRender(e, config) {
+    let {
+        thumbWidth,
+        thumbHeight,
+        dropArea,
+        input,
+        allowedFiles
+    } = config;
+    fileImport(e.target.files, allowedFiles);
+    renderGallery(dropArea, imagesList, thumbWidth, thumbHeight);
 }
 
 function attachDragAndDrop(config) {
@@ -24,14 +32,12 @@ function prevent(e) {
     e.preventDefault();
 }
 
-function onDrop(e, {thumbWidth, thumbHeight, dropArea, allowedFiles}) {
-    console.log(`${e} - ${thumbWidth} - ${thumbHeight} - ${dropArea} - ${allowedFiles}`)
+function onDrop(e, { thumbWidth, thumbHeight, dropArea, allowedFiles }) {
     e.stopPropagation();
     e.preventDefault();
     let files = e.dataTransfer.files;
-    console.log(files);
     fileImport(files, allowedFiles);
-    renderGallery(dropArea, imagesList, thumbWidth, thumbHeight);    
+    renderGallery(dropArea, imagesList, thumbWidth, thumbHeight);
 }
 
 const init = ({ thumbWidth, thumbHeight, dropArea, input, allowedFiles }) => {
@@ -41,8 +47,8 @@ const init = ({ thumbWidth, thumbHeight, dropArea, input, allowedFiles }) => {
         dropArea,
         input,
         allowedFiles
-    }
-    attachInput(input, allowedFiles);
+    };
+    attachInput(config);
     attachDragAndDrop(config);
 }
 

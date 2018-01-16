@@ -6,7 +6,8 @@ body {
     font-size: 1em;
 }
 canvas {
-    border: 1px solid black;
+    border: 1px solid lightgrey;
+    margin: 5px;
 }
 input {
     display: none;
@@ -28,7 +29,7 @@ input+label:hover,
 }
 
 #dropArea{
-    min-height: 50vh;
+    min-height: 70vh;
     background-color: grey;
-    border: 2px solid white;
+    border: 1px solid lightgrey;
 }

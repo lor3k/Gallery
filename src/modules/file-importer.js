@@ -27,10 +27,9 @@ function addCorrectFilesToList(inputFiles, correctImages) {
     correctImages.forEach((ext, i) => {
         if (ext) {
             imagesList.push(inputFiles[i]);
-            console.log('%c Correct extention!', 'background: green;');
         }
         else {
-            console.log('%c Wrong file extention!', 'background: darkred;');
+            alert('Wrong file extention!');
         }
     });
 }
