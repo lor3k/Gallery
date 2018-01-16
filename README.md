@@ -30,6 +30,11 @@ You need [webpack](https://www.npmjs.com/package/webpack) too. It should be inst
 
 ```npm install --save-dev webpack```
 
+To start bundler to build app use this command in terminal:
+
+```npm start```
+
+
 
 
 
