@@ -5,12 +5,15 @@ body {
     font-family: Tahoma, sans-serif;
     font-size: 1em;
 }
+
 canvas {
     border: 1px solid black;
 }
+
 input {
     display: none;
 }
+
 input+label,
 .create {
     margin: 10px;
@@ -21,6 +24,7 @@ input+label,
     transition: 0.5s;
     display: inline-block;
 }
+
 input+label:hover,
 .create:hover {
     background-color: purple;

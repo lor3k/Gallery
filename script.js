@@ -21,7 +21,7 @@ function Gallery() {
     this.label.setAttribute('for', 'input')
     this.label.innerText = 'Add new image or drag & drop...'
 
-    this.imagesList = []
+    this.imagesList = [];
     this.input.addEventListener('change', () => this.render(), false);
     document.body.addEventListener('dragenter', e => this.prevent(e), false);
     document.body.addEventListener('dragover', e => this.prevent(e), false);
