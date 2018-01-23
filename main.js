@@ -1,5 +1,7 @@
 (() => {
-	const galleryModule = (() => {
+
+	const galleryModule = () => {
+
 		const renderGallery = (dropArea, imagesList, thumbWidth, thumbHeight) => {
 			const thumbWH = { thumbWidth, thumbHeight };
 			clearGallery(dropArea);
@@ -39,7 +41,7 @@
 				context.fillRect(0, 0, thumbWidth, thumbHeight);
 				context.drawImage(image, xStartPoint, yStartPoint, contentWidth, contentHeight);
 				return thumbnail;
-			})
+			});
 		}
 
 		const checkProportions = (imagesArr, { thumbWidth, thumbHeight }) => {
@@ -60,7 +62,7 @@
 			thumbnails.forEach((thumbnail, index) => {
 				galleryContainer.appendChild(thumbnail);
 				thumbnail.addEventListener('click', () => renderFullSizeImage(thumbnail, imagesArr[index]), false);
-			})
+			});
 			return galleryContainer;
 		}
 
@@ -76,11 +78,11 @@
 
 		return { renderGallery };
 
-	})();
+	};
 
 
 
-	const fileImporterModule = (() => {
+	const fileImporterModule = () => {
 
 		const imagesList = [];
 
@@ -95,7 +97,7 @@
 			for (let i = 0; i < inputFiles.length; i++) {
 				const fileNameSplitted = inputFiles[i].name.split('.');
 				const fileExt = fileNameSplitted[fileNameSplitted.length - 1].toLowerCase();
-				extensionsArray.push(fileExt)
+				extensionsArray.push(fileExt);
 			}
 			return extensionsArray;
 		}
@@ -112,15 +114,11 @@
 
 		return { fileImport, imagesList };
 
-	})();
+	};
 
 
 
-	const imageProcessorModule = (() => {
-
-		const imagesList = fileImporterModule.imagesList
-		const fileImport = fileImporterModule.fileImport
-		const renderGallery = galleryModule.renderGallery
+	const imageProcessorModule = ({ renderGallery }, { fileImport, imagesList }) => {
 
 		const attachInput = config => {
 			const { input } = config;
@@ -131,8 +129,8 @@
 
 		const fileImportAndRender = (e, config) => {
 			const { thumbWidth, thumbHeight, dropArea, input, allowedFiles } = config;
-			fileImporterModule.fileImport(e.target.files, allowedFiles);
-			galleryModule.renderGallery(dropArea, imagesList, thumbWidth, thumbHeight);
+			fileImport(e.target.files, allowedFiles);
+			renderGallery(dropArea, imagesList, thumbWidth, thumbHeight);
 		}
 
 		const attachDragAndDrop = config => {
@@ -163,18 +161,17 @@
 
 		return { init };
 
-	})();
+	};
 
 
 
-	const init = imageProcessorModule.init
-
-	init({
-		thumbWidth: 150,
-		thumbHeight: 100,
-		dropArea: '#dropArea',
-		input: '#fieldInput',
-		allowedFiles: ['png', 'jpg']
-	});
+	imageProcessorModule(galleryModule(), fileImporterModule())
+		.init({
+			thumbWidth: 150,
+			thumbHeight: 100,
+			dropArea: '#dropArea',
+			input: '#fieldInput',
+			allowedFiles: ['png', 'jpg']
+		});
 
 })();
